@@ -7,6 +7,11 @@ Stage 4  lateness classifier on features + stages 1-3, bagged over 5 seeds
 Final service = mean(raw-target bag, log-target bag); Style/Tech rows also averaged with a Style/Tech-only model.
 
 Out-of-fold predictions use GroupKFold by route, so no training row sees a model fitted on its own route.
+
+Optional post-hoc calibration (fit_calibration, fitted on validation-fold predictions, stored in models["calibration"]):
+  - the log-target bag predicts the conditional median, which sits below the mean -> rescale it by sum(y)/sum(pred)
+  - Style/Tech service rescaled per brand (Fresh left alone: scaling it hurt MAE)
+  - lateness logit shifted by a constant (validation showed a small, stable under-prediction)
 Models are stored as a dict of plain scikit-learn estimators (joblib), loadable without this module.
 """
 import numpy as np
@@ -92,8 +97,36 @@ def fit(train: pd.DataFrame, arrival_m: pd.Series, features: list, traffic: pd.D
             "svc_raw": svc_raw, "svc_log": svc_log, "svc_segment": svc_seg, "segment_brands": SEGMENT_BRANDS}
 
 
-def predict(models: dict, df: pd.DataFrame, traffic: pd.DataFrame, return_parts=False):
-    """Return (pred_service_min, pred_late_prob) aligned to df rows."""
+def _logit(p):
+    p = np.clip(p, 1e-6, 1 - 1e-6)
+    return np.log(p / (1 - p))
+
+
+def fit_calibration(parts: pd.DataFrame) -> dict:
+    """Fit post-hoc corrections on *validation* predictions made with calibrate=False.
+
+    parts needs: brand, y_svc, y_late, svc_raw, svc_log, svc_segment (NaN for non-segment rows), late.
+    """
+    from scipy.optimize import minimize_scalar
+    from sklearn.metrics import log_loss
+    log_scale = parts.y_svc.sum() / parts.svc_log.sum()
+    seg = parts.brand.isin(SEGMENT_BRANDS).values
+    svc = _combine_service(parts.svc_raw.values, parts.svc_log.values * log_scale, parts.svc_segment.values, seg)
+    brand_scale = {b: float(parts.y_svc[parts.brand.eq(b)].sum() / svc[parts.brand.eq(b).values].sum()) for b in SEGMENT_BRANDS}
+    z = _logit(parts.late.values)
+    shift = minimize_scalar(lambda b: log_loss(parts.y_late, 1 / (1 + np.exp(-(z + b)))), bounds=(-1, 1), method="bounded").x
+    return {"log_scale": float(log_scale), "brand_scale": brand_scale, "late_logit_shift": float(shift)}
+
+
+def _combine_service(raw, lg, seg_pred, seg_mask):
+    svc = (raw + lg) / 2
+    svc[seg_mask] = (svc[seg_mask] + seg_pred[seg_mask]) / 2
+    return svc
+
+
+def predict(models: dict, df: pd.DataFrame, traffic: pd.DataFrame, return_parts=False, calibrate=True):
+    """Return (pred_service_min, pred_late_prob) aligned to df rows.
+    Applies models["calibration"] when present and calibrate=True."""
     lookup = tf._speed_lookup(traffic)
     d = df.reset_index(drop=True)
     X = d[models["features"]]
@@ -103,13 +136,23 @@ def predict(models: dict, df: pd.DataFrame, traffic: pd.DataFrame, return_parts=
 
     raw = np.mean([m.predict(X) for m in models["svc_raw"]], axis=0)
     lg = np.mean([np.exp(m.predict(X)) for m in models["svc_log"]], axis=0)
-    svc = (raw + lg) / 2
     seg = d.brand.isin(models["segment_brands"]).values
+    seg_pred = np.full(len(d), np.nan)
     if seg.any():
-        svc[seg] = (svc[seg] + models["svc_segment"].predict(X[seg])) / 2
+        seg_pred[seg] = models["svc_segment"].predict(X[seg])
+    parts = {"svc_raw": raw, "svc_log": lg, "svc_segment": seg_pred, "late_uncalibrated": late.copy(),
+             "svc_stage1": d.pred_svc.values, "late_slack_sim": d.sim_pred_slack.values, "pred_slack2": d.pred_slack2.values}
+
+    cal = models.get("calibration") if calibrate else None
+    if cal:
+        svc = _combine_service(raw, lg * cal["log_scale"], seg_pred, seg)
+        for b, k in cal["brand_scale"].items():
+            svc[d.brand.astype(str).eq(b).values] *= k
+        late = 1 / (1 + np.exp(-(_logit(late) + cal["late_logit_shift"])))
+    else:
+        svc = _combine_service(raw, lg, seg_pred, seg)
     svc = np.clip(svc, 1.0, None)
     late = np.clip(late, 1e-4, 1 - 1e-4)
     if return_parts:
-        return svc, late, {"svc_raw": raw, "svc_log": lg, "svc_stage1": d.pred_svc.values,
-                           "late_slack_sim": d.sim_pred_slack.values, "pred_slack2": d.pred_slack2.values}
+        return svc, late, parts
     return svc, late
