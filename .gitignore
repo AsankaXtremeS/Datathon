@@ -5,7 +5,4 @@ __pycache__/
 .DS_Store
 
 # competition data is confidential - never commit
-data/raw/
-data/interim/
-data/processed/
-*.csv.bak
+
