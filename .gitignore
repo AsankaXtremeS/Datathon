@@ -3,3 +3,9 @@ __pycache__/
 .ipynb_checkpoints/
 *.zip
 .DS_Store
+
+# competition data is confidential - never commit
+data/raw/
+data/interim/
+data/processed/
+*.csv.bak
