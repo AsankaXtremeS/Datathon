@@ -70,16 +70,20 @@ data/                    # confidential competition data - never committed
     reference/           # outlets, calendar, traffic, roads, vehicles, etc.
     templates/           # submission templates
   interim/               # intermediate cleaned data
+    task1/               # audited joins, labelled train table, test base table
   processed/             # model-ready feature tables
+    task1/               # feature tables, feature meta, folds/ (validation folds)
 notebooks/               # exploration and modelling notebooks
   task1/                 # service time + lateness
   task2a/                # demand forecast
   task2b/                # peak-day allocation
 tools/                   # helper scripts
+  task1/                 # shared Task 1 modules imported by the notebooks
 reports/                 # analysis outputs
   figures/               # charts
   metrics/               # evaluation metrics
-HackBots_Datathon/       # final submission package
+    task1/               # baselines, CV results, evaluation and comparison metrics
+HackBots_Datathon_Submision/  # final submission package
   models/                # trained model files
   predictions/           # submission CSVs
   docs/                  # documentation

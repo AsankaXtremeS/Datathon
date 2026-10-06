@@ -2,8 +2,8 @@
 from pathlib import Path
 import nbformat as nbf
 
-P = Path(__file__).resolve().parents[1] / "notebooks" / "task1" / "03_feature_engineering.ipynb"
-SETUP = ('import sys, json; sys.path.append("../../tools")\n'
+P = Path(__file__).resolve().parents[2] / "notebooks" / "task1" / "03_feature_engineering.ipynb"
+SETUP = ('import sys, json; sys.path.append("../../tools/task1")\n'
          'import numpy as np, pandas as pd\n'
          'import matplotlib.pyplot as plt\n'
          'from sklearn.metrics import roc_auc_score\n'

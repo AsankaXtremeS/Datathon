@@ -1,7 +1,7 @@
 """Shared helpers for Task 1 (service time + lateness).
 
 Import from a notebook in notebooks/task1/:
-    import sys; sys.path.append("../../tools")
+    import sys; sys.path.append("../../tools/task1")
     from task1_common import *
 """
 from pathlib import Path
@@ -10,12 +10,12 @@ import numpy as np
 import pandas as pd
 
 # ---- paths (resolved from the repo root, so notebooks can run from anywhere) ----
-ROOT = Path(__file__).resolve().parents[1]
-RAW = ROOT / "data" / "raw"
-INTERIM = ROOT / "data" / "interim"
-PROCESSED = ROOT / "data" / "processed"
-METRICS = ROOT / "reports" / "metrics"
-FIGURES = ROOT / "reports" / "figures"
+ROOT = Path(__file__).resolve().parents[2]          # tools/task1/ -> repo root
+RAW = ROOT / "data" / "raw"                         # shared by all tasks, never modified
+INTERIM = ROOT / "data" / "interim" / "task1"
+PROCESSED = ROOT / "data" / "processed" / "task1"
+METRICS = ROOT / "reports" / "metrics" / "task1"
+FIGURES = ROOT / "reports" / "figures" / "task1"
 SUBMISSION_DIR = ROOT / "HackBots_Datathon_Submision"
 MODELS = SUBMISSION_DIR / "models"
 PREDICTIONS = SUBMISSION_DIR / "predictions"

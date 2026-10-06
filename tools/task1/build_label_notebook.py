@@ -2,8 +2,8 @@
 from pathlib import Path
 import nbformat as nbf
 
-P = Path(__file__).resolve().parents[1] / "notebooks" / "task1" / "02_label_construction.ipynb"
-SETUP = ('import sys; sys.path.append("../../tools")\n'
+P = Path(__file__).resolve().parents[2] / "notebooks" / "task1" / "02_label_construction.ipynb"
+SETUP = ('import sys; sys.path.append("../../tools/task1")\n'
          'import numpy as np, pandas as pd\n'
          'import matplotlib.pyplot as plt\n'
          'from task1_common import *\n'
