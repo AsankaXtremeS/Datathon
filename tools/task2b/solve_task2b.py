@@ -508,7 +508,22 @@ def solve(scenario, weights=None, verbose=True):
     served = alloc.served()
     pack_remaining(alloc, [o for o in scope if o.ref not in served], value)
     repair(alloc, value)
-    return alloc, value, dict(stageA_value=val, stageA_proven=proven, stageA_nodes=nodes)
+    return alloc, value, dict(stageA_value=val, stageA_proven=proven, stageA_nodes=nodes,
+                              stageA_served=frozenset().union(*[p[1] for p in sel.values()]))
+
+
+def forced_tradeoff(scenario, ref, value, stats):
+    """Re-run stage A with order `ref` forced onto a reefer: what serving it would have cost."""
+    reefers = [v for v in AVAILABLE[scenario] if v.temp == "reefer"]
+    chilled = [o for o in ORDERS.values() if o.scenario == scenario and o.chilled
+               and any(compatible(v, o) for v in reefers)]
+    forced = dict(value)
+    forced[ref] += 1000.0
+    sel, val, _, _ = solve_reefers(reefers, chilled, forced)
+    served = frozenset().union(*[p[1] for p in sel.values()])
+    trip = next(t for p in sel.values() for t in p[2] if ref in t[1])
+    return dict(loss=stats["stageA_value"] - (val - 1000.0), trip_min=trip[2], trip_stops=len(trip[1]),
+                dropped=sorted(stats["stageA_served"] - served), added=sorted(served - stats["stageA_served"]))
 
 
 # ============================================================
@@ -600,11 +615,11 @@ def build_outputs(scenario, alloc, value, stats, comparisons):
             kind, why = "unavoidable", reason
         elif o.chilled:
             kind = "capacity (reefer)"
-            rivals = [ORDERS[r] for r in served_by if ORDERS[r].chilled]
-            lowest = min(rivals, key=lambda x: value[x.ref])
-            why = (f"all {len(reefers)} available reefers are full or out of pre-dawn minutes; "
-                   f"priority {value[o.ref]:.1f} vs lowest served chilled {lowest.ref} "
-                   f"({value[lowest.ref]:.1f}) - serving it would displace higher-value chilled stops")
+            out_min = TRAVEL[o.district][0]
+            why = (f"all {len(reefers)} available reefers are full or out of pre-dawn minutes; a {o.district} trip "
+                   f"needs {out_min:g} of the {BUDGET['predawn']} pre-dawn minutes outbound alone, so serving it "
+                   f"(priority {value[o.ref]:.1f}) would displace nearer multi-stop chilled trips whose combined "
+                   f"priority is higher")
         else:
             kind, why = "choice", "no spare capacity on a compatible vehicle after higher-priority orders"
         def_rows.append(dict(scenario=o.scenario, order_ref=o.ref, outlet_id=o.outlet, brand=o.brand,
@@ -653,7 +668,7 @@ def build_outputs(scenario, alloc, value, stats, comparisons):
     return sub, trips_df, stops_df, def_df, summary_df
 
 
-def write_policy(scenario, sub, trips_df, stops_df, def_df, value, comparisons):
+def write_policy(scenario, sub, trips_df, stops_df, def_df, value, comparisons, stats=None):
     scope = SCN.assign(served=(sub.decision == "served").values)
     vehicles = AVAILABLE[scenario]
     reefers = [v for v in vehicles if v.temp == "reefer"]
@@ -696,7 +711,9 @@ def write_policy(scenario, sub, trips_df, stops_df, def_df, value, comparisons):
     L.append("## 3. How the allocation was built\n")
     L.append("1. **Scarcest resource first** - every feasible day plan (<=2 trips, capacity, 270-min budget) was "
              "enumerated for each reefer, and branch-and-bound chose the plan combination with maximum priority "
-             "value (proven optimal for this objective).")
+             + ("value (proven optimal for this objective)." if stats and stats.get("stageA_proven") else
+                f"value (best combination found: the search stops at {EXACT_NODE_LIMIT:,} nodes, so optimality "
+                "is not proven)."))
     L.append("2. **Ambient fleet** - remaining orders packed per brand+district, Fresh first, preferring a fresh "
              "vehicle's first trip (on-time before 08:00) and keeping Style/Tech daytime trips on vehicles already used pre-dawn.")
     L.append("3. **Repair** - any deferred order is inserted wherever it fits; 1-for-1 swaps replace a lower-value order.")
@@ -714,7 +731,8 @@ def write_policy(scenario, sub, trips_df, stops_df, def_df, value, comparisons):
         L.append("| Order | Outlet | District | Type | m3 | Def. yday | Days | Why |\n|---|---|---|---|---|---|---|---|")
         for r in def_df.itertuples():
             short = r.reason if r.deferral_type == "unavoidable" else (
-                "reefers full - lower priority than every served chilled stop it could replace")
+                f"{TRAVEL[r.district][0]:g} min outbound of the {BUDGET['predawn']}-min window - serving it would "
+                "displace nearer multi-stop chilled trips worth more in total")
             L.append(f"| {r.order_ref} | {r.outlet_id} | {r.district} | {r.temp} {r.brand} | {r.volume_m3:.2f} "
                      f"| {r.deferred_yesterday} | {r.days_since_last_served} | **{r.deferral_type}**: {short} |")
         un = def_df[def_df.deferral_type == "unavoidable"]
@@ -722,8 +740,25 @@ def write_policy(scenario, sub, trips_df, stops_df, def_df, value, comparisons):
         L.append(f"\n- **Unavoidable ({len(un)})**: physically larger than any available vehicle; must be split by the "
                  "outlet/merchandising team or sent with a hired truck.")
         L.append(f"- **Capacity-driven, our choice of which ({len(cap)})**: {cap.volume_m3.sum():.1f} m3 had to stay behind "
-                 "because reefer capacity is short; *which* orders stayed is our choice. We kept back the lowest-value chilled orders "
-                 "(none deferred yesterday) in the closest districts, which can be recovered first tomorrow.")
+                 "because reefer capacity is short; *which* orders stayed is our choice. We kept back the chilled orders in the "
+                 f"far districts ({', '.join(sorted(f'{d} {TRAVEL[d][0]:g} min' for d in cap.district.unique()))} outbound), "
+                 f"where the outbound drive alone takes a large share of a reefer's {BUDGET['predawn']} pre-dawn minutes; "
+                 "the same minutes serve more stops and more priority value in nearer districts.")
+        dy = cap[cap.deferred_yesterday == 1]
+        for r in dy.itertuples():
+            txt = (f"- **Second miss, a deliberate trade-off**: {r.order_ref} ({r.outlet_id}, {r.district}) was also deferred "
+                   f"yesterday and is {r.days_since_last_served} days unserved (priority {r.priority:.1f}"
+                   + (", the highest of any deferred order)." if r.priority >= def_df.priority.max() else ")."))
+            if stats and "stageA_served" in stats and r.temp == "chilled":
+                t = forced_tradeoff(scenario, r.order_ref, value, stats)
+                fmt_o = lambda refs: ", ".join(f"{x} ({ORDERS[x].district}, {value[x]:.1f})" for x in refs)
+                txt += (f" We re-solved the reefer stage with it forced in: a {r.district} trip takes {t['trip_min']:g} of "
+                        f"the {BUDGET['predawn']} pre-dawn minutes for {t['trip_stops']} stop(s), which pushes out {len(t['dropped'])} "
+                        f"chilled orders [{fmt_o(t['dropped'])}] while only {len(t['added'])} get in [{fmt_o(t['added'])}]. "
+                        f"That is {t['loss']:.1f} less priority value and {len(t['dropped']) - len(t['added'])} more outlets "
+                        "short today.")
+            txt += " It goes first on tomorrow's plan; releasing a workshop reefer would recover it today."
+            L.append(txt)
         L.append(f"- **Cost**: {def_df.volume_m3.sum():.1f} m3 not delivered "
                  f"({def_df[def_df.temp == 'chilled'].volume_m3.sum():.1f} m3 chilled), "
                  f"{def_df.outlet_id.nunique()} outlets short today; these orders carry into tomorrow's peak.")
@@ -772,7 +807,7 @@ def main():
             comparisons[name] = policy_stats(a)
 
         sub, trips_df, stops_df, def_df, summary_df = build_outputs(scenario, alloc, value, stats, comparisons)
-        write_policy(scenario, sub, trips_df, stops_df, def_df, value, comparisons)
+        write_policy(scenario, sub, trips_df, stops_df, def_df, value, comparisons, stats)
         subs.append(sub)
 
         pd.set_option("display.width", 200)

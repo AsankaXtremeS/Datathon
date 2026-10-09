@@ -1,6 +1,6 @@
 # Task 2B – Data Preparation
 
-Task 2B (peak-day allocation, scenario S1, Peliyagoda) uses no trained model, so there is no label construction or feature engineering. Preparation consists of loading five files, removing unavailable vehicles, joining orders to vehicle and travel data, and computing trip time. This is implemented in `load()` and `trip_minutes()` in `solve_task2b.py`.
+Task 2B (peak-day allocation, scenario S1, Peliyagoda) uses no trained model, so there is no label construction or feature engineering. Preparation consists of loading five files, removing unavailable vehicles, joining orders to vehicle and travel data, and computing trip time. This is implemented in `load()` and `trip_minutes()` in the Task 2B section of `HackBots_FinalNotebook.ipynb`.
 
 ## 1. Inputs
 

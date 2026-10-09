@@ -21,7 +21,7 @@ Rationale: chilled dairy/meat cannot be held and the festival is a week away; an
 
 ## 3. How the allocation was built
 
-1. **Scarcest resource first** - every feasible day plan (<=2 trips, capacity, 270-min budget) was enumerated for each reefer, and branch-and-bound chose the plan combination with maximum priority value (proven optimal for this objective).
+1. **Scarcest resource first** - every feasible day plan (<=2 trips, capacity, 270-min budget) was enumerated for each reefer, and branch-and-bound chose the plan combination with maximum priority value (best combination found: the search stops at 3,000,000 nodes, so optimality is not proven).
 2. **Ambient fleet** - remaining orders packed per brand+district, Fresh first, preferring a fresh vehicle's first trip (on-time before 08:00) and keeping Style/Tech daytime trips on vehicles already used pre-dawn.
 3. **Repair** - any deferred order is inserted wherever it fits; 1-for-1 swaps replace a lower-value order.
 4. **Windows (soft)** - stops sequenced by earliest window close; departures 03:30 (Fresh) / 08:00 (daytime), return = outbound time. 8 of 79 stops simulate late.
@@ -43,15 +43,16 @@ Rationale: chilled dairy/meat cannot be held and the festival is a week away; an
 
 | Order | Outlet | District | Type | m3 | Def. yday | Days | Why |
 |---|---|---|---|---|---|---|---|
-| S1-056 | OUT053 | Galle | chilled Fresh | 3.75 | 0 | 2 | **capacity (reefer)**: reefers full - lower priority than every served chilled stop it could replace |
-| S1-058 | OUT054 | Galle | chilled Fresh | 16.52 | 0 | 1 | **capacity (reefer)**: reefers full - lower priority than every served chilled stop it could replace |
-| S1-064 | OUT060 | Matara | chilled Fresh | 6.78 | 0 | 1 | **capacity (reefer)**: reefers full - lower priority than every served chilled stop it could replace |
-| S1-067 | OUT062 | Matara | chilled Fresh | 5.19 | 0 | 1 | **capacity (reefer)**: reefers full - lower priority than every served chilled stop it could replace |
+| S1-056 | OUT053 | Galle | chilled Fresh | 3.75 | 0 | 2 | **capacity (reefer)**: 103 min outbound of the 270-min window - serving it would displace nearer multi-stop chilled trips worth more in total |
+| S1-058 | OUT054 | Galle | chilled Fresh | 16.52 | 0 | 1 | **capacity (reefer)**: 103 min outbound of the 270-min window - serving it would displace nearer multi-stop chilled trips worth more in total |
+| S1-064 | OUT060 | Matara | chilled Fresh | 6.78 | 0 | 1 | **capacity (reefer)**: 137 min outbound of the 270-min window - serving it would displace nearer multi-stop chilled trips worth more in total |
+| S1-067 | OUT062 | Matara | chilled Fresh | 5.19 | 0 | 1 | **capacity (reefer)**: 137 min outbound of the 270-min window - serving it would displace nearer multi-stop chilled trips worth more in total |
 | S1-078 | OUT070 | Kurunegala | ambient Style | 40.66 | 0 | 2 | **unavoidable**: order is 40.66 m3 / 2562 kg; largest compatible vehicle VEH011 holds 38 m3 / 7200 kg |
-| S1-083 | OUT074 | Puttalam | chilled Fresh | 8.66 | 1 | 5 | **capacity (reefer)**: reefers full - lower priority than every served chilled stop it could replace |
+| S1-083 | OUT074 | Puttalam | chilled Fresh | 8.66 | 1 | 5 | **capacity (reefer)**: 173 min outbound of the 270-min window - serving it would displace nearer multi-stop chilled trips worth more in total |
 
 - **Unavoidable (1)**: physically larger than any available vehicle; must be split by the outlet/merchandising team or sent with a hired truck.
-- **Capacity-driven, our choice of which (5)**: 40.9 m3 had to stay behind because reefer capacity is short; *which* orders stayed is our choice. We kept back the lowest-value chilled orders (none deferred yesterday) in the closest districts, which can be recovered first tomorrow.
+- **Capacity-driven, our choice of which (5)**: 40.9 m3 had to stay behind because reefer capacity is short; *which* orders stayed is our choice. We kept back the chilled orders in the far districts (Galle 103 min, Matara 137 min, Puttalam 173 min outbound), where the outbound drive alone takes a large share of a reefer's 270 pre-dawn minutes; the same minutes serve more stops and more priority value in nearer districts.
+- **Second miss, a deliberate trade-off**: S1-083 (OUT074, Puttalam) was also deferred yesterday and is 5 days unserved (priority 59.7, the highest of any deferred order). We re-solved the reefer stage with it forced in: a Puttalam trip takes 188 of the 270 pre-dawn minutes for 1 stop(s), which pushes out 4 chilled orders [S1-021 (Colombo, 24.9), S1-071 (Kurunegala, 27.0), S1-073 (Kurunegala, 20.8), S1-075 (Kurunegala, 26.2)] while only 2 get in [S1-058 (Galle, 31.5), S1-083 (Puttalam, 59.7)]. That is 7.8 less priority value and 2 more outlets short today. It goes first on tomorrow's plan; releasing a workshop reefer would recover it today.
 - **Cost**: 81.6 m3 not delivered (40.9 m3 chilled), 6 outlets short today; these orders carry into tomorrow's peak.
 
 ## 5. Trade-off check (same solver, different priorities)

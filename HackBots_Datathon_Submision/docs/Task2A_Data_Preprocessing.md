@@ -1,7 +1,7 @@
 # Task 2A - Data preparation, label construction, features and model
 
 **Team HackBots - Tech-Triathlon 2026 Datathon.**
-Code: `tools/task2a/` (`task2a_common.py`, `task2a_features.py`, `task2a_models.py`, `task2a_validation.py`). Notebooks: `notebooks/task2a/01 ... 06`.
+Code: all Task 2A code is reproduced in `HackBots_FinalNotebook.ipynb` (Task 2A sections). Notebook numbers below (01-06) refer to the development notebooks in our repository.
 Outputs: `predictions/submission_task2a.csv` (+ `task2a_forecast_with_bands.csv`), `models/task2a_models.joblib`, `docs/architecture/task2a_architecture.png`.
 
 ## 1. Data preparation (notebooks 01-02)
