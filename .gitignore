@@ -6,3 +6,4 @@ __pycache__/
 
 # competition data is confidential - never commit
 
+data/
