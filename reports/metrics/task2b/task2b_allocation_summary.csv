@@ -1,0 +1,26 @@
+scenario,metric,value
+S1,total_orders,85
+S1,served,79
+S1,deferred,6
+S1,service_rate_orders,0.9294
+S1,demand_m3,409.86
+S1,served_m3,328.3
+S1,service_rate_volume,0.801
+S1,priority_value_served,1599.3
+S1,priority_value_total,1809.9
+S1,vehicles_used,13
+S1,vehicles_available,28
+S1,trips,23
+S1,stops_simulated_late,8
+S1,reefer_stageA_proven_optimal,False
+S1,Fresh_ambient_served_orders,49/49
+S1,Fresh_ambient_served_m3,132.97/132.97
+S1,Fresh_chilled_served_orders,21/26
+S1,Fresh_chilled_served_m3,140.72/181.63
+S1,Style_ambient_served_orders,4/5
+S1,Style_ambient_served_m3,36.55/77.21
+S1,Tech_ambient_served_orders,5/5
+S1,Tech_ambient_served_m3,18.05/18.05
+S1,alt_policy_Chosen (priority-weighted),"{'served': 79, 'm3': 328.298, 'chilled_m3': 140.723, 'dy_served': 9}"
+S1,alt_policy_Max volume only,"{'served': 77, 'm3': 331.347, 'chilled_m3': 143.772, 'dy_served': 9}"
+S1,alt_policy_Max order count only,"{'served': 79, 'm3': 328.298, 'chilled_m3': 140.723, 'dy_served': 9}"
