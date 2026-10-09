@@ -1,13 +1,13 @@
-policy,released reefer,class,chilled orders served,chilled m3 served,orders served,net orders gained
-weighted,none (today),,21,140.72,79,0
-weighted,VEH001,truck 26.4 m3,23,167.24,81,2
-weighted,VEH002,truck 21.1 m3,23,163.88,81,2
-weighted,VEH004,truck 33.4 m3,23,167.81,81,2
-weighted,VEH005,truck 33.4 m3,23,167.81,81,2
-weighted,VEH035,van 7.0 m3,23,149.67,81,2
-lexicographic,none (today),,19,126.25,77,0
-lexicographic,VEH001,truck 26.4 m3,23,167.24,81,4
-lexicographic,VEH002,truck 21.1 m3,23,163.88,81,4
-lexicographic,VEH004,truck 33.4 m3,23,167.81,81,4
-lexicographic,VEH005,truck 33.4 m3,23,167.81,81,4
-lexicographic,VEH035,van 7.0 m3,21,139.91,79,2
+policy,released reefer,chilled orders served,orders served,net orders gained
+weighted,none (today),21,79,0
+weighted,VEH001 (truck 26.4 m3),23,81,2
+weighted,VEH002 (truck 21.1 m3),23,81,2
+weighted,VEH004 (truck 33.4 m3),23,81,2
+weighted,VEH005 (truck 33.4 m3),23,81,2
+weighted,VEH035 (van 7 m3),23,81,2
+lexicographic,none (today),19,77,0
+lexicographic,VEH001 (truck 26.4 m3),23,81,4
+lexicographic,VEH002 (truck 21.1 m3),23,81,4
+lexicographic,VEH004 (truck 33.4 m3),23,81,4
+lexicographic,VEH005 (truck 33.4 m3),23,81,4
+lexicographic,VEH035 (van 7 m3),21,79,2

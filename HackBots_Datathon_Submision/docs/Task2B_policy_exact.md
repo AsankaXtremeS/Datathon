@@ -8,11 +8,11 @@
 - Ambient trucks and vans are not binding (24 vehicles for about 17 trips).
 
 ## 2. Priority policy (strict order, each level optimised and then fixed)
-1. Fresh orders **deferred yesterday** - never miss an outlet twice in a row.
+1. Orders **deferred yesterday** - never miss an outlet twice in a row.
 2. **Chilled** orders - the most chilled orders served (outlets kept in stock for the festival build-up).
 3. Highest **days since last served**.
 4. Volume delivered, as a tie-break.
-Ambient orders are all served unless physically impossible. Trips are planned so that no stop arrives after its window closes; reefers and constraints are as in the booklet (brand+district per trip, reefer for chilled, vans for van_only, capacity, 270/480-minute budgets, whole orders, at most 2 trips).
+Ambient orders are all served unless physically impossible. Trips are planned so that no stop arrives after its window closes; constraints are as in the booklet (brand+district per trip, reefer for chilled, vans for van_only, capacity, 270/480-minute budgets, whole orders, at most 2 trips).
 
 ## 3. Deferrals
 | Order | Outlet | District | Type | m3 | Def. yday | Days | Why |
@@ -27,12 +27,12 @@ Ambient orders are all served unless physically impossible. Trips are planned so
 | S1-078 | OUT070 | Kurunegala | ambient | 40.7 | 0 | 2 | unavoidable: larger than any compatible vehicle |
 
 - **Unavoidable (1):** S1-078 is larger than any compatible vehicle (cannot be split); ask the outlet to split it or hire a larger truck.
-- **Chosen (reefer capacity):** which chilled orders wait is our policy decision. Serving the Puttalam outlet skipped yesterday costs a 188-minute trip, so 7 nearer/larger orders wait instead: they become first-time misses.
+- **Chosen (reefer capacity):** which chilled orders wait is our policy decision. Serving the Puttalam outlet skipped yesterday costs a 188-minute trip, so 7 other orders wait instead: they become first-time misses.
 
 ## 4. Cost of the choice (exact comparison)
 Weighted score instead of the written order: 79 orders, 328.3 m3, 21 chilled, but 1 outlet skipped for a second day (['S1-003', 'S1-071', 'S1-073', 'S1-075']). The score's deferred-yesterday weight (20) is below the value (about 28) at which it would choose the same plan.
 
 ## 5. Recommendations
-- Release a reefer from the workshop: the what-if analysis (notebook 05) gives the exact orders recovered for each of VEH001, VEH002, VEH004, VEH005, VEH035.
+- Release a reefer from the workshop: the what-if table above gives the exact orders recovered for each of VEH001, VEH002, VEH004, VEH005, VEH035.
 - Serve tomorrow's carried-over chilled orders first (they will be `deferred_yesterday = 1`).
 - Ask OUT070 to split its 40.7 m3 Style order.
