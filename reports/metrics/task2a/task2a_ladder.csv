@@ -1,0 +1,14 @@
+model,brand,n,MAE,RMSE,WAPE,bias
+"A0 per-depot ridge, no trend",Fresh,680.0,38.3838,54.2952,0.0517,-0.0433
+"A0 per-depot ridge, no trend",Style,680.0,10.3508,16.8526,0.0925,-0.0273
+A1 + damped trend,Fresh,680.0,29.7397,43.4952,0.04,-0.0054
+A1 + damped trend,Style,680.0,10.5615,16.9563,0.0944,-0.0251
+A2 + New Year ramp,Fresh,680.0,27.06,36.655,0.0364,-0.0047
+A2 + New Year ramp,Style,680.0,10.1224,16.4159,0.0905,-0.0238
+A3 + a ramp per festival (per-depot),Fresh,680.0,24.1476,32.5189,0.0325,-0.0087
+A3 + a ramp per festival (per-depot),Style,680.0,9.4336,15.7833,0.0843,-0.0336
+A4 + pooled depots,Fresh,680.0,24.2055,32.3123,0.0326,-0.0088
+A4 + pooled depots,Style,680.0,9.3572,15.5931,0.0837,-0.0342
+A5 + residual boosting (production Fresh),Fresh,680.0,23.6448,32.2244,0.0318,-0.0122
+A5 + residual boosting (production Fresh),Style,680.0,8.6197,14.1119,0.0771,-0.0362
+A6 Style: drop the trend (production Style),Style,680.0,8.5141,13.8343,0.0761,-0.033

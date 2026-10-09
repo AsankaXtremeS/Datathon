@@ -1,0 +1,5 @@
+model,brand,n,MAE,RMSE,WAPE,bias
+blend 30% direct + 70% share,Fresh,680.0,9.7803,13.0583,0.0361,-0.0091
+blend 50/50 (production),Fresh,680.0,9.5966,12.8641,0.0354,-0.0122
+direct: same architecture fitted on chilled,Fresh,680.0,9.7885,13.1797,0.0361,-0.02
+share: total forecast x depot chilled share,Fresh,680.0,10.4164,13.6743,0.0384,-0.0044

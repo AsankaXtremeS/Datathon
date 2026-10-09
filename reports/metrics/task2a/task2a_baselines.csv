@@ -1,0 +1,10 @@
+model,brand,n,MAE,RMSE,WAPE,bias
+naive: last 26 weeks mean,Fresh,680.0,44.6456,68.4452,0.0601,-0.0191
+naive: last 26 weeks mean,Style,680.0,11.8275,18.6664,0.1058,-0.01
+naive: last 26 weeks mean,Tech,680.0,7.9024,9.535,0.3031,-0.0391
+naive: last 8 weeks mean,Fresh,680.0,46.8596,70.2724,0.0631,-0.0114
+naive: last 8 weeks mean,Style,680.0,12.6653,19.4901,0.1132,-0.009
+naive: last 8 weeks mean,Tech,680.0,8.2439,9.981,0.3162,-0.017
+seasonal naive (same ISO week last year x growth),Fresh,680.0,60.0515,79.7028,0.0809,-0.0505
+seasonal naive (same ISO week last year x growth),Style,680.0,10.4683,15.7458,0.0936,-0.016
+seasonal naive (same ISO week last year x growth),Tech,680.0,8.911,11.0984,0.3418,-0.0475

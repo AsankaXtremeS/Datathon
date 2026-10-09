@@ -1,0 +1,5 @@
+model,brand,n,MAE,RMSE,WAPE,bias
+T0 constant: last 52 weeks mean,Tech,680.0,7.8546,9.5231,0.3013,-0.0507
+T1 weekday ridge,Tech,680.0,7.7828,9.4614,0.2985,-0.0586
+T2 + payday + ramp,Tech,680.0,7.6545,9.4163,0.2936,-0.0591
+T3 + damped trend (= production),Tech,680.0,7.6673,9.3555,0.2941,-0.0344
