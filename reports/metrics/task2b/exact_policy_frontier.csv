@@ -1,0 +1,6 @@
+,rule,served,deferred,m3,chilled_served,chilled_m3,deferred_yday_served,deferred_yday_total,priority_value,vehicles,trips,late_stops_sim,seconds
+weighted,"weighted score (as in solve_task2b.py), solved exactly",79.0,6.0,328.3,21.0,140.72,9.0,10.0,1599.3,15.0,25.0,4.0,2.9
+lexicographic,deferred-yesterday > chilled > days-since-served (written policy),77.0,8.0,313.83,19.0,126.25,10.0,10.0,1590.8,15.0,25.0,4.0,3.7
+chilled_count,most chilled orders served first,79.0,6.0,328.3,21.0,140.72,9.0,10.0,1599.3,15.0,25.0,3.0,2.3
+chilled_volume,most chilled m3 served first,77.0,8.0,331.35,19.0,143.77,9.0,10.0,1568.3,15.0,25.0,4.0,9.8
+max_orders,most orders served first,79.0,6.0,328.3,21.0,140.72,9.0,10.0,1599.3,15.0,25.0,4.0,2.0

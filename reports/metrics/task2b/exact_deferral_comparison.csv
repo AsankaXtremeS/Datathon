@@ -1,0 +1,21 @@
+candidate,order_ref,outlet,brand,district,type,m3,deferred_yesterday,days_since,kind
+first solver (submitted),S1-056,OUT053,Fresh,Galle,chilled,3.8,0,2,capacity (reefer)
+first solver (submitted),S1-058,OUT054,Fresh,Galle,chilled,16.5,0,1,capacity (reefer)
+first solver (submitted),S1-064,OUT060,Fresh,Matara,chilled,6.8,0,1,capacity (reefer)
+first solver (submitted),S1-067,OUT062,Fresh,Matara,chilled,5.2,0,1,capacity (reefer)
+first solver (submitted),S1-078,OUT070,Style,Kurunegala,ambient,40.7,0,2,unavoidable
+first solver (submitted),S1-083,OUT074,Fresh,Puttalam,chilled,8.7,1,5,capacity (reefer)
+exact: weighted,S1-056,OUT053,Fresh,Galle,chilled,3.8,0,2,capacity (reefer)
+exact: weighted,S1-058,OUT054,Fresh,Galle,chilled,16.5,0,1,capacity (reefer)
+exact: weighted,S1-064,OUT060,Fresh,Matara,chilled,6.8,0,1,capacity (reefer)
+exact: weighted,S1-067,OUT062,Fresh,Matara,chilled,5.2,0,1,capacity (reefer)
+exact: weighted,S1-078,OUT070,Style,Kurunegala,ambient,40.7,0,2,unavoidable
+exact: weighted,S1-083,OUT074,Fresh,Puttalam,chilled,8.7,1,5,capacity (reefer)
+exact: lexicographic,S1-003,OUT002,Fresh,Colombo,chilled,1.8,0,1,capacity (reefer)
+exact: lexicographic,S1-058,OUT054,Fresh,Galle,chilled,16.5,0,1,capacity (reefer)
+exact: lexicographic,S1-064,OUT060,Fresh,Matara,chilled,6.8,0,1,capacity (reefer)
+exact: lexicographic,S1-067,OUT062,Fresh,Matara,chilled,5.2,0,1,capacity (reefer)
+exact: lexicographic,S1-071,OUT065,Fresh,Kurunegala,chilled,12.0,0,1,capacity (reefer)
+exact: lexicographic,S1-073,OUT066,Fresh,Kurunegala,chilled,5.8,0,1,capacity (reefer)
+exact: lexicographic,S1-075,OUT067,Fresh,Kurunegala,chilled,7.2,0,2,capacity (reefer)
+exact: lexicographic,S1-078,OUT070,Style,Kurunegala,ambient,40.7,0,2,unavoidable
