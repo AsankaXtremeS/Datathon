@@ -1,10 +1,10 @@
 # Task 2A - Data preparation, label construction, features and model
 
 **Team HackBots - Tech-Triathlon 2026 Datathon.**
-Code: all Task 2A code is reproduced in `HackBots_FinalNotebook.ipynb` (Task 2A sections). Notebook numbers below (01-06) refer to the development notebooks in our repository.
+Code: all Task 2A code is in `HackBots_FinalNotebook.ipynb` (Task 2A sections).
 Outputs: `predictions/submission_task2a.csv` (+ `task2a_forecast_with_bands.csv`), `models/task2a_models.joblib`, `docs/architecture/task2a_architecture.png`.
 
-## 1. Data preparation (notebooks 01-02)
+## 1. Data preparation
 
 | Step | What we did | Result |
 |---|---|---|
@@ -15,7 +15,7 @@ Outputs: `predictions/submission_task2a.csv` (+ `task2a_forecast_with_bands.csv`
 | Not-run gross-up | The Task 1 test file has no `not_run` orders, so the days from 2026-02-16 are scaled by `1/(1 - train not_run share)` per series. | 0% to 2.6% depending on the series; derived from train only. |
 | Reconciliation | Asserts: one row per series x day; panel total equals raw order total on untouched days. | Pass. |
 
-## 2. What drives demand (notebooks 01, 03)
+## 2. What drives demand
 - Order **counts** follow a fixed weekday schedule (Fresh Peliyagoda 79/88/77/87/75/84 Mon-Sat, std < 1). Style and Tech order only on depot-specific weekdays. Demand therefore moves through order **size**.
 - Size rises with `festival_ramp`, on paydays (about +10-12%), on Fri/Sat, and with slow growth for Fresh. Monsoon has no demand effect.
 - **Festivals differ in size**: the Sinhala New Year run-up lifts Fresh volume far more than Vesak, Poson or Esala, so each festival gets its own ramp feature.
@@ -25,14 +25,14 @@ Outputs: `predictions/submission_task2a.csv` (+ `task2a_forecast_with_bands.csv`
 ## 3. Features (all known in advance from `calendar.csv`)
 Weekday dummies, `is_payday`, `is_holiday`, `festival_ramp` and its square, one ramp per festival (`r_new_year`, `r_vesak`, `r_poson`, ...), damped trend (years since 2024-01-01), and for the residual learner: days to next / since last festival and ISO week. No lagged demand is used, so a 10-week horizon needs no recursion.
 
-## 4. Model (notebook 05)
+## 4. Model
 Every model forecasts **mean daily volume on operating days**; the weekly forecast is the sum over the operating days of each ISO week, so holidays and short weeks are handled structurally.
 - **Fresh:** one ridge on log daily volume for both depots (depot x weekday intercepts, depot trend), back-transformed with the lognormal mean, plus a small boosting model (depth 3, 60 trees) on the ridge residuals. Damped trend (phi 0.9 per week).
 - **Style:** the same, **without a trend** (the backtest prefers it on every metric).
 - **Tech:** per-depot ridge on volume with weekday, payday, ramp and damped trend, strongly regularised (the series is mostly noise).
 - **Chilled (Fresh):** 50/50 blend of a direct chilled model and total x chilled share, capped at total. Style / Tech chilled = 0.
 
-## 5. Validation (notebooks 04, 05, 05b, 05c)
+## 5. Validation
 34 rolling origins (every 2 weeks from 2024-10-07), 10-week horizon, forward in time; scored on weekly depot x brand totals with MAE, RMSE, WAPE and bias.
 
 | Series | Final model MAE / RMSE / WAPE | Best baseline WAPE |
@@ -46,7 +46,7 @@ Fresh ablation (WAPE): no trend 5.2% -> damped trend 4.0% -> New Year ramp 3.6% 
 
 Selection rules followed: ridge first, boosting kept only if consistently helpful (better in 21/34 Fresh and 25/34 Style origins, better median, clear gain in festival windows); trend chosen per brand by lowest rolling error (Fresh damped ~ full; Style none; Tech damped); mean-based forecasts; all three metrics agree on best and worst models.
 
-Robustness (05c): hyper-parameter sweeps form a plateau (Fresh WAPE 3.15-3.23%); dropping either observed New Year changes the week 15-16 forecast by about 1%; plausible model variants agree within about 1% except week 22.
+Robustness: hyper-parameter sweeps form a plateau (Fresh WAPE 3.15-3.23%); dropping either observed New Year changes the week 15-16 forecast by about 1%; plausible model variants agree within about 1% except week 22.
 
 Tested and rejected: festival-specific effects shared across all festivals (week 22 over-forecast by 8-10%), catch-up demand features around closures, weekday-specific chilled shares, Poisson and Poisson-boosting models for Tech, and a multiplicative correction for Style festival weeks (unstable across split directions).
 
