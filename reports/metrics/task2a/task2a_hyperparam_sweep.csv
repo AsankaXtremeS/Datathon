@@ -1,0 +1,29 @@
+model,brand,n,MAE,RMSE,WAPE,bias
+gb depth=2 iter=60,Fresh,680.0,23.574,32.3112,0.0317,-0.0119
+gb depth=2 iter=60,Style,680.0,8.6396,14.1816,0.0772,-0.0333
+gb depth=3 iter=120,Fresh,680.0,23.7176,32.263,0.0319,-0.0122
+gb depth=3 iter=120,Style,680.0,8.4949,13.5119,0.076,-0.0331
+gb depth=3 iter=30,Fresh,680.0,23.7402,32.1543,0.032,-0.0119
+gb depth=3 iter=30,Style,680.0,8.6,14.2243,0.0769,-0.0325
+gb depth=3 iter=60,Fresh,680.0,23.6448,32.2244,0.0318,-0.0122
+gb depth=3 iter=60,Style,680.0,8.5141,13.8343,0.0761,-0.033
+gb depth=4 iter=60,Fresh,680.0,23.5785,32.1361,0.0318,-0.0119
+gb depth=4 iter=60,Style,680.0,8.5931,13.8245,0.0768,-0.0342
+ridge alpha=0.001,Fresh,680.0,23.6231,32.1654,0.0318,-0.0121
+ridge alpha=0.001,Style,680.0,8.5068,13.8218,0.0761,-0.0324
+ridge alpha=0.01,Fresh,680.0,23.6448,32.2244,0.0318,-0.0122
+ridge alpha=0.01,Style,680.0,8.5141,13.8343,0.0761,-0.033
+ridge alpha=0.1,Fresh,680.0,23.5074,32.0023,0.0317,-0.012
+ridge alpha=0.1,Style,680.0,8.598,14.0635,0.0769,-0.038
+ridge alpha=1.0,Fresh,680.0,23.3767,31.7908,0.0315,-0.0111
+ridge alpha=1.0,Style,680.0,9.4602,15.258,0.0846,-0.0601
+trend phi=0.5 (Fresh only; Style has no trend),Fresh,680.0,23.9688,32.8101,0.0323,-0.0147
+trend phi=0.5 (Fresh only; Style has no trend),Style,680.0,8.5141,13.8343,0.0761,-0.033
+trend phi=0.8 (Fresh only; Style has no trend),Fresh,680.0,23.767,32.4529,0.032,-0.0132
+trend phi=0.8 (Fresh only; Style has no trend),Style,680.0,8.5141,13.8343,0.0761,-0.033
+trend phi=0.9 (Fresh only; Style has no trend),Fresh,680.0,23.6448,32.2244,0.0318,-0.0122
+trend phi=0.9 (Fresh only; Style has no trend),Style,680.0,8.5141,13.8343,0.0761,-0.033
+trend phi=0.95 (Fresh only; Style has no trend),Fresh,680.0,23.5703,32.0814,0.0317,-0.0115
+trend phi=0.95 (Fresh only; Style has no trend),Style,680.0,8.5141,13.8343,0.0761,-0.033
+trend phi=1.0 (Fresh only; Style has no trend),Fresh,680.0,23.4947,31.9218,0.0316,-0.0106
+trend phi=1.0 (Fresh only; Style has no trend),Style,680.0,8.5141,13.8343,0.0761,-0.033

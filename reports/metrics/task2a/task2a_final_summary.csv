@@ -1,0 +1,4 @@
+model,brand,n,MAE,RMSE,WAPE,bias
+production,Fresh,680.0,23.6448,32.2244,0.0318,-0.0122
+production,Style,680.0,8.5141,13.8343,0.0761,-0.033
+production,Tech,680.0,7.6673,9.3555,0.2941,-0.0344

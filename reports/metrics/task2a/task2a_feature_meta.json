@@ -1,0 +1,35 @@
+{
+ "base_cols": [
+  "d0",
+  "d1",
+  "d2",
+  "d3",
+  "d4",
+  "d5",
+  "is_payday",
+  "festival_ramp",
+  "is_holiday"
+ ],
+ "festival_ramp_cols": [
+  "r_new_year",
+  "r_vesak",
+  "r_poson",
+  "r_esala",
+  "r_deepavali",
+  "r_christmas",
+  "r_thai_pongal"
+ ],
+ "gb_cols": [
+  "dow",
+  "iso_week",
+  "dtn",
+  "dsl",
+  "festival_ramp",
+  "is_payday"
+ ],
+ "trend": "damped phi=0.9/week",
+ "targets": [
+  "vol",
+  "ch"
+ ]
+}
